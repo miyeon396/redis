@@ -1,0 +1,22 @@
+spring:
+  redis:
+    sentinel:
+      master: mymaster
+      nodes:
+        - 127.0.0.1:26379
+        - 127.0.0.1:26380
+        - 127.0.0.1:26381
+    lettuce:
+      pool:
+        max-active: 10
+        max-idle: 10
+        min-idle: 2
+        test-on-borrow: true
+#        test-while-idle: true
+      shutdown-timeout: 100ms
+    timeout: 3000ms
+
+logging:
+  level:
+    io.lettuce.core: DEBUG
+    org.springframework.data.redis: DEBUG

@@ -1,0 +1,6 @@
+### 1. Set value (POST)
+POST http://localhost:8080/redis/set?key=testKey&value=testValue
+Content-Type: application/x-www-form-urlencoded
+
+### 2. Get value (GET)
+GET http://localhost:8080/redis/get?key=testKey
