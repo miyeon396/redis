@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
+import org.redisson.client.codec.StringCodec;
 import org.redisson.config.ClusterServersConfig;
 import org.redisson.config.Config;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +27,9 @@ public class RedissonConfig {
 	@Bean
 	public RedissonClient redissonClient() {
 		final Config config = new Config();
+
+//		config.setCodec(new JsonJacksonCodec());
+		config.setCodec(StringCodec.INSTANCE); //TODO :: 데이터 타입 별 코덱 적용 필요
 
 		ClusterServersConfig csc = config.useClusterServers()
 			.setScanInterval(2000) //Cluster의 토폴로지 스캔 간격을 설정

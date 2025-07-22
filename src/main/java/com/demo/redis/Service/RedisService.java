@@ -35,11 +35,14 @@ public class RedisService {
         RBucket<String> bucket = redissonClient.getBucket(key);
         // 값과 함께 TTL 10분 설정
         bucket.set(value, 10, TimeUnit.MINUTES);
+        log.info("Redis SET - key: {}, value: {}, TTL: {}min", key, value, 10);
     }
 
     public String getValueWithRedisson(String key) {
         RBucket<String> bucket = redissonClient.getBucket(key);
-        return bucket.get();
+        String value = bucket.get();
+        log.info("Redis GET - key: {}, value: {}", key, value);
+        return value;
     }
 
     // 클러스터 상태 확인
