@@ -2,6 +2,9 @@ package com.demo.redis.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.redisson.api.RBucket;
+import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.connection.RedisClusterConnection;
 import org.springframework.data.redis.connection.RedisClusterNode;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -9,13 +12,15 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CallService {
+public class RedisService {
 
     private final StringRedisTemplate redisTemplate;
+    private final RedissonClient redissonClient;
 
     public void setValue(String key, String value) {
         redisTemplate.opsForValue().set(key, value, Duration.ofMinutes(10));
@@ -23,6 +28,18 @@ public class CallService {
 
     public String getValue(String key) {
         return redisTemplate.opsForValue().get(key);
+    }
+
+
+    public void setValueWithRedisson(String key, String value) {
+        RBucket<String> bucket = redissonClient.getBucket(key);
+        // 값과 함께 TTL 10분 설정
+        bucket.set(value, 10, TimeUnit.MINUTES);
+    }
+
+    public String getValueWithRedisson(String key) {
+        RBucket<String> bucket = redissonClient.getBucket(key);
+        return bucket.get();
     }
 
     // 클러스터 상태 확인

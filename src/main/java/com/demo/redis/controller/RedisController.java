@@ -1,6 +1,6 @@
-package com.demo.redis;
+package com.demo.redis.controller;
 
-import com.demo.redis.Service.CallService;
+import com.demo.redis.Service.RedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,22 +13,37 @@ import java.util.Map;
 @RequestMapping("/redis")
 public class RedisController {
 
-    private final CallService callService;
+    private final RedisService redisService;
 
     @PostMapping("/set")
     public String set(@RequestParam String key, @RequestParam String value) {
-        callService.setValue(key, value);
+        redisService.setValue(key, value);
         return "OK";
     }
 
     @GetMapping("/get")
     public String get(@RequestParam String key) {
-        return callService.getValue(key);
+        return redisService.getValue(key);
     }
 
+    @PostMapping("/redisson/set")
+    public String setRedisson(@RequestParam String key, @RequestParam String value) {
+        redisService.setValueWithRedisson(key, value);
+        return "OK";
+    }
+
+    @GetMapping("/redisson/get")
+    public String getRedisson(@RequestParam String key) {
+        return redisService.getValueWithRedisson(key);
+    }
+
+
+
+
+    //TODO ::
     @GetMapping("/cluster/info")
     public ResponseEntity<String> getClusterInfo() {
-        String info = callService.getClusterInfo();
+        String info = redisService.getClusterInfo();
         return ResponseEntity.ok(info);
     }
 
@@ -37,8 +52,8 @@ public class RedisController {
         Map<String, Object> status = new HashMap<>();
 
         try {
-            boolean connected = callService.isClusterConnected();
-            String info = callService.getClusterInfo();
+            boolean connected = redisService.isClusterConnected();
+            String info = redisService.getClusterInfo();
 
             status.put("connected", connected);
             status.put("cluster_info", info);
@@ -62,16 +77,16 @@ public class RedisController {
 
         try {
             // 1. 값 설정 테스트
-            callService.setValue(testKey, testValue);
+            redisService.setValue(testKey, testValue);
             result.put("set_result", "success");
 
             // 2. 값 조회 테스트
-            String retrievedValue = callService.getValue(testKey);
+            String retrievedValue = redisService.getValue(testKey);
             result.put("get_result", retrievedValue != null ? "success" : "failed");
             result.put("retrieved_value", retrievedValue);
 
             // 3. 클러스터 정보
-            String clusterInfo = callService.getClusterInfo();
+            String clusterInfo = redisService.getClusterInfo();
             result.put("cluster_info", clusterInfo);
 
             result.put("test_key", testKey);
